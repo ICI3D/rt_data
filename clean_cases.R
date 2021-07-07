@@ -2,13 +2,11 @@
 library(data.table)
 library(lubridate)
 
-.args <- if (interactive()) c(
-  "C:/Users/alice/Box/MMED/project/jhu-case_timeseries.csv", "C:/Users/alice/Box/MMED/project/jhu-case_timeseries_clean.rds"
-) else commandArgs(trailingOnly = TRUE)
-
-print(.args)
-
-res <- data.table()
+.debug <- "C:/Users/alice/Box/MMED/project"
+.args <- if (interactive()) sprintf(c(
+  "%s/jhu-case_timeseries.csv",
+  "%s/jhu-case_timeseries_clean.rds"
+), .debug[1]) else commandArgs(trailingOnly = TRUE)
 
 res <- fread(.args[1])
 

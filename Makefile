@@ -13,22 +13,27 @@ R = Rscript $^ $@
 ${DATAPATH}:
 	mkdir -p $@
 
-setup: ${DATAPATH}/clean_cases.rds
+setup: ${DATAPATH}/jhu-case_timeseries_clean.rds
 
-${DATAPATH}/raw_cases.csv: | ${DATAPATH}
+${DATAPATH}/jhu-case_timeseries.csv: | ${DATAPATH}
 	${WGET} ${JHUCASE}
 
-${DATAPATH}/raw_deaths.csv: | ${DATAPATH}
-	${WGET} ${JHUDEATHS}
-
-${DATAPATH}/clean_cases.rds: clean_cases.R ${DATAPATH}/raw_cases.csv
+${DATAPATH}/jhu-case_timeseries_clean.rds: clean_cases.R ${DATAPATH}/jhu-case_timeseries.csv
 	${R}
 
-${DATAPATH}/clean_deaths.rds: clean_deaths.R ${DATAPATH}/raw_deaths.csv
+aggregatetest: ${DATAPATH}/agg_1.rds
+
+${DATAPATH}/agg_1.rds: agg_1.R ${DATAPATH}/jhu-case_timeseries_clean.rds
+	${R}
+
+${DATAPATH}/agg_2.rds: agg_2.R ${DATAPATH}/jhu-case_timeseries_clean.rds
 	${R}
 
 ${DATAPATH}/rt_cases.rds: estimate_rt_cases.R ${DATAPATH}/clean_cases.rds
 	${R}
 
-${DATAPATH}/fig_rt_cases.png: plot_rt_cases.R ${DATAPATH}/clean_cases.rds ${DATAPATH}/rt_cases.rds
+${DATAPATH}/fig_raw_cases.png: plot_raw_cases.R ${DATAPATH}/jhu-case_timeseries_clean.rds
+	${R}
+
+${DATAPATH}/fig_agg_1.png: plot_rt_cases.R ${DATAPATH}/clean_cases.rds ${DATAPATH}/rt_cases.rds
 	${R}
