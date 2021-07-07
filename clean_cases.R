@@ -25,6 +25,6 @@ res$date <- mdy(res$date)
 
 #creating incidence variable "new_case"
 res$new_case[1] <- 0
-res$new_case[2:nrow(res)] <- diff(res)
+res$new_case[2:nrow(res)] <- diff(res$cum_case)
 
 saveRDS(res, tail(.args, 1))
