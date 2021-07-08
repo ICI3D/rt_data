@@ -21,8 +21,14 @@ ${DATAPATH}/jhu-case_timeseries.csv: | ${DATAPATH}
 ${DATAPATH}/jhu-case_timeseries_clean.rds: clean_cases.R ${DATAPATH}/jhu-case_timeseries.csv
 	${R}
 
-ALLAGG := $(subst .R,.rds,$(shell agg_*.R))
-allagg: ${ALLAGG}
+ALLAGG := $(subst .R,.rds,$(shell ls agg_*.R))
+$(info ${ALLAGG})
+
+allagg: $(addprefix ${DATAPATH}/,${ALLAGG})
+allrt: $(addprefix ${DATAPATH}/rt_,${ALLAGG})
+allpng: $(subst .rds,.png,$(addprefix ${DATAPATH}/fig_,${ALLAGG}))
+
+.PRECIOUS: %.rds
 
 ${DATAPATH}/agg_%.rds: agg_%.R ${DATAPATH}/jhu-case_timeseries_clean.rds
 	${R}
