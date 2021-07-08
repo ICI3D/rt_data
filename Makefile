@@ -22,7 +22,6 @@ ${DATAPATH}/jhu-case_timeseries_clean.rds: clean_cases.R ${DATAPATH}/jhu-case_ti
 	${R}
 
 ALLAGG := $(subst .R,.rds,$(shell ls agg_*.R))
-$(info ${ALLAGG})
 
 allagg: $(addprefix ${DATAPATH}/,${ALLAGG})
 allrt: $(addprefix ${DATAPATH}/rt_,${ALLAGG})
@@ -45,7 +44,7 @@ ${DATAPATH}/fig_agg_%.png: plot_agg.R ${DATAPATH}/jhu-case_timeseries_clean.rds 
 ${DATAPATH}/fig_raw_cases.png ${DATAPATH}/fig_raw_cases.tiff: plot_raw_cases.R ${DATAPATH}/jhu-case_timeseries_clean.rds
 	${R}
 
-figs: ${DATAPATH}/fig_raw_cases.png
+figs: ${DATAPATH}/fig_raw_cases.png allpng
 
 #${DATAPATH}/fig_raw_cases.png: plot_raw_cases.R ${DATAPATH}/jhu-case_timeseries_clean.rds
 #	${R}
