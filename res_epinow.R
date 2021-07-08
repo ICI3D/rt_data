@@ -1,4 +1,5 @@
 library(EpiNow2)
+library(data.table)
 
 .debug <- "analysis"
 .args <- if (interactive()) file.path(
