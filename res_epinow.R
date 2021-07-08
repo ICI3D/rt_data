@@ -1,6 +1,18 @@
 library(EpiNow2)
 
+.debug <- "analysis"
+.args <- if (interactive()) file.path(
+  .debug[1], c(
+    "jhu-case_timeseries_clean.rds",
+    "base_rt.rds"
+)) else commandArgs(trailingOnly = TRUE)
+
+case.dt <- readRDS(.args[1])
+filter.dt <- case.dt[order(date)][-(1:(which.max(new_case > 0)-1))][, .(date, confirm)]
 #First of several items of bad form: I assume you have res somewhere. Sorry.
+
+christmas <- filter.dt[between(date, "2020-11-01", "2021-01-31")]
+# last180 <- filter.dt[(.N-180):.N]
 
 #reporting delay: I accept this is a synthetic example,
 #but I want the code to run so. 
@@ -14,29 +26,12 @@ reporting_delay <- list(
 generation_time <- get_generation_time(disease = "SARS-CoV-2", source = "ganyani")
 incubation_period <- get_incubation_period(disease = "SARS-CoV-2", source = "lauer")
 
-#apparently the reported_cases variable needs to be called confirm?
-#1. Is there a way around this?
-#2. I currently vote we assign confirm before each run.
-res$confirm<-res$new_case
+estimates <- epinow(
+  reported_cases = christmas,
+  generation_time = generation_time,
+  delays = delay_opts(incubation_period, reporting_delay),
+  rt = rt_opts(prior = list(mean = 2, sd = 0.2)),
+  stan = stan_opts(cores = 4)
+)
 
-#We can only have confirm and the date for epinow() to run as best I can tell.
-subs <- res[, c(2,5)]
-
-##############################################################################
-#DO ME FIRST
-#test <- res[500:nrow(res), c(2,5)]
-#test_est <- epinow(reported_cases = test,
-#                   generation_time = generation_time,
-#                   delays = delay_opts(incubation_period, reporting_delay),
-#                   rt = rt_opts(prior = list(mean = 2, sd = 0.2)),
-#                   stan = stan_opts(cores = 4)
-#knitr::kable(summary(test_est))
-#plot(test_est)
-#############################################################################
-
-estimates <- epinow(reported_cases = subs,
-                    generation_time = generation_time,
-                    delays = delay_opts(incubation_period, reporting_delay),
-                    rt = rt_opts(prior = list(mean = 2, sd = 0.2)),
-                    stan = stan_opts(cores = 4))
-
+saveRDS(estimates, tail(.args, 1))
