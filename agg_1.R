@@ -1,24 +1,18 @@
 
-library(data.table)
-library(lubridate)
+.args <- if (interactive()) c(
+  "analysis/jhu-case_timeseries_clean.rds",
+  "analysis/agg_1.rds"
+) else commandArgs(trailingOnly = TRUE)
 
-.debug <- "C:/Users/alice/Box/MMED/project"
-.args <- if (interactive()) sprintf(c(
-  "%s/jhu-case_timeseries_clean.rds",
-  "%s/agg_1.rds"
-), .debug[1]) else commandArgs(trailingOnly = TRUE)
+clean <- readRDS(.args[1])
 
-cleaned.data <- readRDS(.args[1])
+# sunday = 1
+clean[, wd := wday(date) ]
+# roll to next 2 (monday)
+clean[, mondaygrp := cumsum(wd == 3) ]
+clean[, agg := sum(new_case), by=mondaygrp]
+clean[wd != 2, agg := 0 ]
 
-#' describe aggregation scheme
-#' 
-#' 
-#' 
-
-res <- cleaned.data[, .(
-  `Country/Region` = `Country/Region`[.N],
-  date = date[.N],
-  `case-count` = sum(`case-count`)
-)]
+res <- clean[, .(date, new_case = agg)]
 
 saveRDS(res, tail(.args, 1))
