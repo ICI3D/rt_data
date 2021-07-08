@@ -2,9 +2,13 @@ library(lubridate)
 
 #aggregation scheme for reporting weekly on Monday
 
+#wday=1 on Sunday
 res$wday <- wday(res$date)
 counter <- 0
 
+#we don't need to worry about what day of the week the first
+#row is for this aggregation scheme, so I'm not worrying about
+#it. We will for others.
 for(i in 1:nrow(res)){
   if(res$wday[i]==2){
          res$agg[i]=counter+res$new_case[i]
