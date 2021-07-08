@@ -1,10 +1,9 @@
 
-.args <- if (interactive()) c(
-  "analysis/jhu-case_timeseries_clean.rds",
-  "analysis/agg_1.rds"
-) else commandArgs(trailingOnly = TRUE)
-
-clean <- readRDS(.args[1])
+.debug <- "C:/Users/alice/Box/MMED/project"  ## remember to change this line to your local directory
+.args <- if (interactive()) sprintf(c(
+  "%s/jhu-case_timeseries_clean.rds",
+  "%s/agg_1.rds"
+), .debug[1]) else commandArgs(trailingOnly = TRUE)
 
 # sunday = 1
 clean[, wd := wday(date) ]

@@ -21,19 +21,25 @@ ${DATAPATH}/jhu-case_timeseries.csv: | ${DATAPATH}
 ${DATAPATH}/jhu-case_timeseries_clean.rds: clean_cases.R ${DATAPATH}/jhu-case_timeseries.csv
 	${R}
 
-aggregatetest: ${DATAPATH}/agg_1.rds
+ALLAGG := $(subst .R,.rds,$(shell agg_*.R))
+allagg: ${ALLAGG}
 
-${DATAPATH}/agg_1.rds: agg_1.R ${DATAPATH}/jhu-case_timeseries_clean.rds
+${DATAPATH}/agg_%.rds: agg_%.R ${DATAPATH}/jhu-case_timeseries_clean.rds
 	${R}
 
-${DATAPATH}/agg_2.rds: agg_2.R ${DATAPATH}/jhu-case_timeseries_clean.rds
+${DATAPATH}/rt_agg_%.rds: res_epinow.R ${DATAPATH}/agg_%.rds
 	${R}
 
-${DATAPATH}/rt_cases.rds: estimate_rt_cases.R ${DATAPATH}/clean_cases.rds
+${DATAPATH}/rt_init.rds: res_epinow.R ${DATAPATH}/jhu-case_timeseries_clean.rds
 	${R}
 
-${DATAPATH}/fig_raw_cases.png: plot_raw_cases.R ${DATAPATH}/jhu-case_timeseries_clean.rds
+${DATAPATH}/fig_agg_%.png: plot_agg.R ${DATAPATH}/jhu-case_timeseries_clean.rds ${DATAPATH}/rt_init.rds ${DATAPATH}/agg_%.rds ${DATAPATH}/rt_agg_%.rds
 	${R}
 
-${DATAPATH}/fig_agg_1.png: plot_rt_cases.R ${DATAPATH}/clean_cases.rds ${DATAPATH}/rt_cases.rds
+${DATAPATH}/fig_raw_cases.png ${DATAPATH}/fig_raw_cases.tiff: plot_raw_cases.R ${DATAPATH}/jhu-case_timeseries_clean.rds
 	${R}
+
+figs: ${DATAPATH}/fig_raw_cases.png
+
+#${DATAPATH}/fig_raw_cases.png: plot_raw_cases.R ${DATAPATH}/jhu-case_timeseries_clean.rds
+#	${R}

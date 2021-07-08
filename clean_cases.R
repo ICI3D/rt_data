@@ -18,9 +18,13 @@ res <- res["Kenya"]
 res <- res[, `:=` (`Province/State` = NULL, Lat = NULL, Long = NULL)]
 
 #Long format
-res<- melt(res, id.vars = "Country/Region", variable.name = "date", value.name = "case-count")
+res<- melt(res, id.vars = "Country/Region", variable.name = "date", value.name = "cum_case")
 
 #reformating date from mdy to ymd
 res$date <- mdy(res$date)
+
+#creating incidence variable "new_case"
+res$new_case[1] <- 0
+res$new_case[2:nrow(res)] <- diff(res$cum_case)
 
 saveRDS(res, tail(.args, 1))
