@@ -15,10 +15,10 @@ cleaned.data <- readRDS(.args[1])
 #' 
 #' 
 
-#' res <- cleaned.data[, .(
-#'   `Country/Region` = `Country/Region`[.N],
-#'   date = date[.N],
-#'   `case-count` = sum(`case-count`)
-#' )]
+res <- cleaned.data[, .(
+  `Country/Region` = `Country/Region`[.N],
+  date = date[.N],
+  `case-count` = sum(`case-count`)
+)]
 
-#' saveRDS(res, tail(.args, 1))
+saveRDS(res, tail(.args, 1))
