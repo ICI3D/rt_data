@@ -8,7 +8,11 @@ library(EpiNow2)
 )) else commandArgs(trailingOnly = TRUE)
 
 case.dt <- readRDS(.args[1])
-filter.dt <- case.dt[order(date)][-(1:(which.max(new_case > 0)-1))][, .(date, confirm)]
+filter.dt <- case.dt[
+  order(date)
+][
+  -(1:(which.max(new_case > 0)-1))
+][, .(date, confirm = new_case )]
 #First of several items of bad form: I assume you have res somewhere. Sorry.
 
 christmas <- filter.dt[between(date, "2020-11-01", "2021-01-31")]
