@@ -1,24 +1,19 @@
-
 library(data.table)
 library(lubridate)
 
 .debug <- "C:/Users/alice/Box/MMED/project"  ## remember to change this line to your local directory
 .args <- if (interactive()) sprintf(c(
-  "%s/jhu-case_timeseries_clean.rds",
-  "%s/agg_1.rds"
+  "%s/rt_init.rds",
+  "%s/fig_raw_cases.png"
 ), .debug[1]) else commandArgs(trailingOnly = TRUE)
 
 cleaned.data <- readRDS(.args[1])
 
-#' describe aggregation scheme 1
-#' 
-#' 
-#' 
+#' This script is to plot figures for incidence dynamics 
+p <- ggplot(cleaned.data)+
+  geom_bar(aes(x = date, y = inc_case, stat = "identity"))+
+  ggtitle(label = "Kenya Raw Cases")
 
-res <- cleaned.data[, .(
-  `Country/Region` = `Country/Region`[.N],
-  date = date[.N],
-  `case-count` = sum(`case-count`)
-)]
-
-saveRDS(res, tail(.args, 1))
+png(tail(.args, 1))
+print(p)
+dev.off()
