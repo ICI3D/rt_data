@@ -9,7 +9,17 @@ library(lubridate)
 
 cleaned.data <- readRDS(.args[1])
 
-#' describe aggregation scheme 3
-#' 
-#' 
-#' 
+#' Reporting M-W-F
+
+clean <- cleaned.data[, agg := 0]
+
+# sunday = 1
+clean[, wd := wday(date) ]
+# roll to next mwf
+clean[, mwfgrp := cumsum(wd == 3 | wd == 5 | wd == 7) ]
+clean[, agg := sum(new_case), by=mwfgrp]
+clean[wd %in% c(1,3,5,7), agg := 0 ]
+
+res <- clean[, .(date, new_case = agg)]
+
+saveRDS(res, tail(.args, 1))
