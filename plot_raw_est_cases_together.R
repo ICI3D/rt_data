@@ -32,7 +32,7 @@ p <- ggplot(data = cd, aes(x = date))+
   geom_point(data = cd, aes(y = incidence), color = "#F8766D", size = 1.5) +
   geom_line(data = est_case, aes(y = frollmean(est_case, 7, align = "center")), color = "#6d79f8", lwd = 1) +
   ggtitle(label = "Kenya Raw and Estimated Cases") +
-  scale_y_log10()+
+  scale_y_log10(name="Incidence")+
   scale_x_date(name=NULL, date_breaks = "months", date_labels = "%b '%y") +
   coord_cartesian(expand = FALSE) +
   theme_minimal()
