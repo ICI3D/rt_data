@@ -3,7 +3,7 @@ library(lubridate)
 library(ggplot2)
 library(EpiNow2)
 
-.debug <- "/Users/alicearcury-quandt/Documents/GitHub/rt_data//analysis/"  ## remember to change this line to your local directory
+.debug <- "C:/Users/alice/Documents/GitHub/rt_data/analysis/"  ## remember to change this line to your local directory
 .args <- if (interactive()) sprintf(c(
   "%s/jhu-case_timeseries_clean.rds",
   "%s/rt_init.rds",
@@ -28,6 +28,7 @@ cd <- cd[, ..cols]
 setnames(cd, c("date", "incidence"))
 est_case[, est_case := est_case[, "median"]]
 
+#plot with 7-day avg
 p <- ggplot(data = cd, aes(x = date))+
   geom_point(data = cd, aes(y = incidence), color = "#F8766D", size = 1.5) +
   geom_line(data = est_case, aes(y = frollmean(est_case, 7, align = "center")), color = "#6d79f8", lwd = 1) +
@@ -37,4 +38,16 @@ p <- ggplot(data = cd, aes(x = date))+
   coord_cartesian(expand = FALSE) +
   theme_minimal()
 p
-ggsave("overlay_raw_est_case.png", p, width = 16, height = 9)
+ggsave("overlay_raw_est_case_7day.png", p, width = 16, height = 9)
+
+#plot with simple est
+p <- ggplot(data = cd, aes(x = date))+
+  geom_point(data = cd, aes(y = incidence), color = "#F8766D", size = 1.5) +
+  geom_line(data = est_case, aes(y = est_case), color = "#6d79f8", lwd = 1) +
+  ggtitle(label = "Kenya Raw and Estimated Cases") +
+  scale_y_log10(name="Incidence")+
+  scale_x_date(name=NULL, date_breaks = "months", date_labels = "%b '%y") +
+  coord_cartesian(expand = FALSE) +
+  theme_minimal()
+p
+ggsave("overlay_raw_est_case_7day.png", p, width = 16, height = 9)
