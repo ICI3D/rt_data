@@ -14,9 +14,9 @@ filter.dt <- case.dt[
 ][
   -(1:(which.max(new_case > 0)-1))
 ][, .(date, confirm = new_case )]
-#First of several items of bad form: I assume you have res somewhere. Sorry.
 
-christmas <- filter.dt[between(date, "2020-11-01", "2021-01-31")]
+# Filtering schemes for faster runs - using full dataset for report:
+# christmas <- filter.dt[between(date, "2020-11-01", "2021-01-31")]
 # last180 <- filter.dt[(.N-180):.N]
 
 #reporting delay: I accept this is a synthetic example,
@@ -32,7 +32,7 @@ generation_time <- get_generation_time(disease = "SARS-CoV-2", source = "ganyani
 incubation_period <- get_incubation_period(disease = "SARS-CoV-2", source = "lauer")
 
 estimates <- epinow(
-  reported_cases = christmas,
+  reported_cases = filter.dt,
   generation_time = generation_time,
   delays = delay_opts(incubation_period, reporting_delay),
   rt = rt_opts(prior = list(mean = 2, sd = 0.2)),
