@@ -5,7 +5,7 @@ library(data.table)
 .args <- if (interactive()) file.path(
   .debug[1], c(
     "jhu-case_timeseries_clean.rds",
-    "base_rt.rds"
+    "rt_init.rds"
 )) else commandArgs(trailingOnly = TRUE)
 
 case.dt <- readRDS(.args[1])
